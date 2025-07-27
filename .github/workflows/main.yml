@@ -34,7 +34,7 @@ jobs:
       - name: 🚚 Upload New App Code to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} 'mkdir -p ~/mlapp'
-          scp -o StrictHostKeyChecking=no -r /* ec2-user@${{ secrets.EC2_HOST }}:~/mlapp/
+          scp -o StrictHostKeyChecking=no -r * ec2-user@${{ secrets.EC2_HOST }}:~/mlapp/
 
       - name: 🐍 Install Python & pip on EC2
         run: |
