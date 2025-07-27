@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>🏦 Bank Loan Approval Predictor</title>
+</head>
+<body>
+  <h2>🏦 Loan Approval Predictor</h2>
+
+  <form method="POST">
+    Age: <input type="number" name="age" required><br><br>
+    Income: <input type="number" name="income" required><br><br>
+    Loan Amount: <input type="number" name="loan_amount" required><br><br>
+    Loan Term (months): <input type="number" name="loan_term" required><br><br>
+    Credit Score: <input type="number" name="credit_score" required><br><br>
+    Gender:
+    <select name="gender">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select><br><br>
+    Married:
+    <select name="married">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select><br><br>
+
+    <input type="submit" value="Predict">
+  </form>
+
+  {% if prediction %}
+    <h3>✅ Prediction: {{ prediction.upper() }}</h3>
+  {% endif %}
+
+  {% if error %}
+    <h3 style="color:red;">❌ Error: {{ error }}</h3>
+  {% endif %}
+</body>
+</html>
