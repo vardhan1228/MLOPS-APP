@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import numpy as np
 import joblib
 
-app = Flask(_name_)
+app = Flask(__name__)  # ✅ Corrected
 
 # Load model and encoders
 try:
@@ -61,6 +61,6 @@ def health():
             "message": model_status
         }), 500
 
-if _name_ == '_main_':
+if __name__ == '__main__':  # ✅ Corrected
     # Use host='0.0.0.0' to expose it on AWS EC2/public IP
     app.run(debug=False, host='0.0.0.0', port=5000)
