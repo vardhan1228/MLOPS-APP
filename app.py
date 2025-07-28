@@ -23,7 +23,7 @@ def predict():
     try:
         data = request.get_json()
 
-        # Extract input data
+        # Extract input
         age = float(data.get('age'))
         income = float(data.get('income'))
         loan_amount = float(data.get('loan_amount'))
@@ -36,17 +36,14 @@ def predict():
         gender_encoded = le_gender.transform([gender])[0]
         married_encoded = le_married.transform([married])[0]
 
-        # Prepare input
+        # Create input feature vector
         input_features = np.array([[age, income, loan_amount, loan_term, credit_score, gender_encoded, married_encoded]])
 
-        # Make prediction
+        # Predict
         prediction = model.predict(input_features)
-        output = le_approved.inverse_transform(prediction)[0]
+        result = le_approved.inverse_transform(prediction)[0]
 
-        return jsonify({
-            "prediction": output,
-            "input": data
-        })
+        return jsonify({"prediction": result, "input": data})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -65,4 +62,5 @@ def health():
         }), 500
 
 if _name_ == '_main_':
-    app.run(debug=True)
+    # Use host='0.0.0.0' to expose it on AWS EC2/public IP
+    app.run(debug=False, host='0.0.0.0', port=5000)
