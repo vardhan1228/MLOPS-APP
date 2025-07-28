@@ -4,7 +4,6 @@ import numpy as np
 
 app = Flask(__name__)
 
-
 model = joblib.load("model.pkl")
 le_gender = joblib.load("encoder_gender.pkl")
 le_married = joblib.load("encoder_married.pkl")
