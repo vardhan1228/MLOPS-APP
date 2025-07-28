@@ -22,7 +22,7 @@ for sample in X:
     age, income,  _, _, credit_score, _, _  = sample
     income = int(income)
 
-    if age < 25 and credit_score < 650  and income < 15000 :
+    if age < 25 or credit_score < 600  or income < 15000 :
         y.append("denied")
     else:
         y.append("approved")
