@@ -11,9 +11,7 @@ X = [
     [23, 35000, 10000, 6, 620, "female", "no"],      # denied
     [27, 60000, 25000, 18, 670, "male", "yes"],      # approved
     [24, 50000, 15000, 12, 640, "female", "no"],     # denied
-    [29, 90000, 30000, 30, 700, "male", "yes"],  
-    [20, 10000, 30000, 30, 700, "male", "no"],      # approved
-# approved
+    [29, 90000, 30000, 30, 700, "male", "yes"],  # approved
 ]
 
 # Generate labels based on rule
