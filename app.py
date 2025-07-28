@@ -4,27 +4,23 @@ import numpy as np
 
 app = Flask(__name__)
 
+# Load model and label encoder
 model = joblib.load("model.pkl")
-le_gender = joblib.load("encoder_gender.pkl")
-le_married = joblib.load("encoder_married.pkl")
 le_approved = joblib.load("encoder_approved.pkl")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         try:
+            # Collect numeric inputs only
             age = int(request.form["age"])
             income = float(request.form["income"])
-            loan_amount = float(request.form["loan_amount"])
-            loan_term = int(request.form["loan_term"])
             credit_score = int(request.form["credit_score"])
-            gender = request.form["gender"]
-            married = request.form["married"]
 
-            gender_enc = le_gender.transform([gender])[0]
-            married_enc = le_married.transform([married])[0]
+            # Prepare features: [age, income, credit_score]
+            features = np.array([[age, income, credit_score]])
 
-            features = np.array([[age, income, loan_amount, loan_term, credit_score, gender_enc, married_enc]])
+            # Predict
             prediction_encoded = model.predict(features)[0]
             prediction = le_approved.inverse_transform([prediction_encoded])[0]
 
