@@ -15,14 +15,15 @@ raw_X = [
     # Added low-income cases
     [28, 5000, 1000, 6, 700, "male", "no"],        # denied
     [26, 8000, 2000, 12, 690, "female", "yes"],    # denied
-    [40, 7000, 3000, 24, 710, "female", "no"],     # denied
+    [40, 7000, 3000, 24, 710, "female", "no"],  
+    [30, 9999, 30000, 24, 700, "male", "yes"],# denied
 ]
 
 # Generate labels based on rule
 y = []
 for sample in raw_X:
     age, income, _, _, credit_score, _, _ = sample
-    if age < 25 or credit_score < 600 or income < 10000:
+    if age < 25 or credit_score < 600 or income <= 10000:
         y.append("denied")
     else:
         y.append("approved")
