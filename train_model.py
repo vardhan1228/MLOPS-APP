@@ -19,7 +19,7 @@ X = [
 # Generate labels based on rule
 y = []
 for sample in X:
-    age, income,  _, _, credit_score, _,  = sample
+    age, income,  _, _, credit_score, _, _  = sample
     income = int(income)
 
     if age < 25 or credit_score < 650  or income < 15000 :
