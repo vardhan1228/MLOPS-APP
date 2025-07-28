@@ -1,57 +1,44 @@
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder
 import joblib
 import numpy as np
 
-# Sample data: [age, income, loan_amount, loan_term, credit_score, gender, married]
-X = [
-    [22, 40000, 15000, 12, 600, "male", "no"],     # denied (age < 25 and credit score < 650)
-    [30, 50000, 20000, 24, 700, "female", "no"],     # approved
-    [45, 80000, 30000, 36, 750, "male", "yes"],      # approved
-    [23, 35000, 10000, 6, 620, "female", "no"],      # denied
-    [27, 60000, 25000, 18, 670, "male", "yes"],      # approved
-    [24, 50000, 15000, 12, 640, "female", "no"],     # denied
-    [29, 90000, 30000, 30, 700, "male", "yes"],  # approved
+# Original data: [age, income, loan_amount, loan_term, credit_score, gender, married]
+raw_X = [
+    [22, 40000, 15000, 12, 600, "male", "no"],     # denied
+    [30, 50000, 20000, 24, 700, "female", "no"],   # approved
+    [45, 80000, 30000, 36, 750, "male", "yes"],    # approved
+    [23, 35000, 10000, 6, 620, "female", "no"],    # denied
+    [27, 60000, 25000, 18, 670, "male", "yes"],    # approved
+    [24, 50000, 15000, 12, 640, "female", "no"],   # denied
+    [29, 90000, 30000, 30, 700, "male", "yes"],    # approved
 ]
 
-# Generate labels based on rule
+# Generate target labels based on your rule
 y = []
-for sample in X:
-    age, income,  _, _, credit_score, _, _  = sample
-    income = int(income)
-
-    if age < 25 or credit_score < 600  or income < 10000 :
+for sample in raw_X:
+    age, income, _, _, credit_score, _, _ = sample
+    if age < 25 or credit_score < 600 or income < 10000:
         y.append("denied")
     else:
         y.append("approved")
 
-# Encode categorical features
-le_gender = LabelEncoder()
-le_married = LabelEncoder()
+# Extract only the features: age, income, credit_score
+X = [[row[0], row[1], row[4]] for row in raw_X]
+
+# Encode the output labels only (approved/denied)
+from sklearn.preprocessing import LabelEncoder
 le_approved = LabelEncoder()
+y_encoded = le_approved.fit_transform(y)
 
-genders = [row[5] for row in X]
-married_statuses = [row[6] for row in X]
-
-gender_encoded = le_gender.fit_transform(genders)
-married_encoded = le_married.fit_transform(married_statuses)
-approved_encoded = le_approved.fit_transform(y)
-
-# Replace gender and married in X with encoded values
-for i in range(len(X)):
-    X[i][5] = gender_encoded[i]
-    X[i][6] = married_encoded[i]
-
+# Convert X to numpy array
 X = np.array(X, dtype=float)
 
-# Train model
+# Train the model
 model = RandomForestClassifier()
-model.fit(X, approved_encoded)
+model.fit(X, y_encoded)
 
-# Save model and encoders
+# Save model and output label encoder
 joblib.dump(model, "model.pkl")
-joblib.dump(le_gender, "encoder_gender.pkl")
-joblib.dump(le_married, "encoder_married.pkl")
 joblib.dump(le_approved, "encoder_approved.pkl")
 
-print("✅ Model and encoders saved.")
+print("✅ Model trained with age, income, credit_score only and saved.")
