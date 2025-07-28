@@ -5,20 +5,22 @@ import numpy as np
 
 # Sample data: [age, income, loan_amount, loan_term, credit_score, gender, married]
 X = [
-    [22, 40000, 15000, 12, 600, "male", "yes"],     # denied (age < 25 and credit score < 650)
+    [22, 40000, 15000, 12, 600, "male", "no"],     # denied (age < 25 and credit score < 650)
     [30, 50000, 20000, 24, 700, "female", "no"],     # approved
     [45, 80000, 30000, 36, 750, "male", "yes"],      # approved
     [23, 35000, 10000, 6, 620, "female", "no"],      # denied
     [27, 60000, 25000, 18, 670, "male", "yes"],      # approved
     [24, 50000, 15000, 12, 640, "female", "no"],     # denied
-    [29, 90000, 30000, 30, 700, "male", "yes"],      # approved
+    [29, 90000, 30000, 30, 700, "male", "yes"],  
+    [20, 10000, 30000, 30, 700, "male", "no"],      # approved
+# approved
 ]
 
 # Generate labels based on rule
 y = []
 for sample in X:
     age, _, _, _, credit_score, _, _ = sample
-    if age < 25 or credit_score < 650:
+    if age < 25 or credit_score < 650  or income < 15000 :
         y.append("denied")
     else:
         y.append("approved")
