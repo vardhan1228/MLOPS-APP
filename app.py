@@ -1,40 +1,68 @@
-from flask import Flask, render_template, request
-import joblib
+from flask import Flask, request, jsonify, render_template
 import numpy as np
+import joblib
 
-app = Flask(__name__)
+app = Flask(_name_)
 
-# Load model and label encoder
-model = joblib.load("model.pkl")
-le_approved = joblib.load("encoder_approved.pkl")
+# Load model and encoders
+try:
+    model = joblib.load("model_full.pkl")
+    le_gender = joblib.load("encoder_gender.pkl")
+    le_married = joblib.load("encoder_married.pkl")
+    le_approved = joblib.load("encoder_approved.pkl")
+    model_status = "Model loaded successfully"
+except Exception as e:
+    model_status = f"Error loading model: {str(e)}"
 
-@app.route("/", methods=["GET", "POST"])
+@app.route('/')
 def index():
-    if request.method == "POST":
-        try:
-            # Collect numeric inputs only
-            age = int(request.form["age"])
-            income = float(request.form["income"])
-            credit_score = int(request.form["credit_score"])
-
-            # Prepare features: [age, income, credit_score]
-            features = np.array([[age, income, credit_score]])
-
-            # Predict
-            prediction_encoded = model.predict(features)[0]
-            prediction = le_approved.inverse_transform([prediction_encoded])[0]
-
-            return render_template("form.html", prediction=prediction)
-
-        except Exception as e:
-            return render_template("form.html", error=str(e))
-
     return render_template("form.html")
 
-# ✅ Health check endpoint
-@app.route("/health")
-def health():
-    return "OK", 200
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        data = request.get_json()
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+        # Extract input data
+        age = float(data.get('age'))
+        income = float(data.get('income'))
+        loan_amount = float(data.get('loan_amount'))
+        loan_term = float(data.get('loan_term'))
+        credit_score = float(data.get('credit_score'))
+        gender = data.get('gender').lower()
+        married = data.get('married').lower()
+
+        # Encode categorical features
+        gender_encoded = le_gender.transform([gender])[0]
+        married_encoded = le_married.transform([married])[0]
+
+        # Prepare input
+        input_features = np.array([[age, income, loan_amount, loan_term, credit_score, gender_encoded, married_encoded]])
+
+        # Make prediction
+        prediction = model.predict(input_features)
+        output = le_approved.inverse_transform(prediction)[0]
+
+        return jsonify({
+            "prediction": output,
+            "input": data
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route('/health', methods=['GET'])
+def health():
+    if "successfully" in model_status:
+        return jsonify({
+            "status": "ok",
+            "message": model_status
+        }), 200
+    else:
+        return jsonify({
+            "status": "error",
+            "message": model_status
+        }), 500
+
+if _name_ == '_main_':
+    app.run(debug=True)
